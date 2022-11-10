@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:math';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   runApp(const MyApp());
@@ -35,6 +37,7 @@ class AffirmationList extends StatefulWidget {
 class _AffirmationListState extends State<AffirmationList> {
   List<String> _affirmations = <String>[];
 
+  // Load list of affirmations from assets
   void _loadData() async {
     final _loadedData = await rootBundle.loadString('assets/affirmations.txt');
     setState(() {
@@ -69,7 +72,7 @@ class _AffirmationListState extends State<AffirmationList> {
           onPressed: () async {
             Random random = Random();
             int randomNumber = random.nextInt(_affirmations.length);
-            showNotification(widget.title, _affirmations[randomNumber]);
+            showNotification("Repeat to yourself", _affirmations[randomNumber]);
           },
           child: const Icon(Icons.notifications_active)),
     );
@@ -80,7 +83,7 @@ class _AffirmationListState extends State<AffirmationList> {
         FlutterLocalNotificationsPlugin();
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
@@ -96,11 +99,12 @@ class _AffirmationListState extends State<AffirmationList> {
       'Positive Pushes',
       'Affirmation message',
       description: 'Affirmation message',
+      showBadge: true,
       importance: Importance.max,
     );
 
     await flutterLocalNotificationsPlugin.show(
-      1,
+      0,
       _title,
       _message,
       NotificationDetails(
